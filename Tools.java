@@ -14,6 +14,7 @@ public class Tools {
 
     private static String user;
     private static Difficulty difficulty;
+    private static final Random random = new Random(); // Single Random instance for better randomization
 
     /**
      * Method to generate default Documents folder and return as String
@@ -46,23 +47,25 @@ public class Tools {
             if (!isDevilish) {
                 dimensions = 9;
                 total = 81;
-                switch (random(1, 3)) {
+                // CRITICAL: Clone the template to avoid corrupting the original static arrays
+                // Without cloning, each game would corrupt the template, making subsequent boards invalid
+                switch (randomInt(1, 3)) {
                     case 1:
-                        completeSolution = BOARD1;
+                        completeSolution = clone2DArray(BOARD1);
                         break;
                     case 2:
-                        completeSolution = BOARD2;
+                        completeSolution = clone2DArray(BOARD2);
                         break;
                     case 3:
-                        completeSolution = BOARD3;
+                        completeSolution = clone2DArray(BOARD3);
                         break;
                     default:
-                        completeSolution = BOARD1;      // not necessary but needed to make sure initialized
+                        completeSolution = clone2DArray(BOARD1);
                 }
             } else {
                 dimensions = 16;
                 total = 256;
-                completeSolution = BOARD4;
+                completeSolution = clone2DArray(BOARD4);
             }
             //System.out.println("Original Solution");
             //print2D(completeSolution);
@@ -76,13 +79,19 @@ public class Tools {
             //System.out.println("Complete Randomized Solution");
             //print2D(completeSolution);
 
+            // Validate the transformed solution to ensure it's still a valid Sudoku board
+            if (!isValidSolution(completeSolution, dimensions)) {
+                System.err.println("ERROR: Generated board is not a valid Sudoku solution!");
+                throw new IllegalStateException("Board generation produced an invalid solution");
+            }
+
             int[][] partialSolution = clone2DArray(completeSolution);
 
             ArrayList<Integer[]> a = new ArrayList<>();
 
             for (int i = 0; i < (total - numberOfCellsToDisplay); i++) {
                 while (true) {
-                    Integer[] integer = {random(0, dimensions - 1), random(0, dimensions - 1)};
+                    Integer[] integer = {randomInt(0, dimensions - 1), randomInt(0, dimensions - 1)};
                     if (!contains(integer, a)) {
                         partialSolution[integer[0]][integer[1]] = 0;
                         a.add(integer);
@@ -147,7 +156,7 @@ public class Tools {
         int b = (!isDevilish ? 3 : 4);
         for (int i = 0; i < a; i = i + b) {
             for (int j = 1; j < b + 1; j++) {
-                swapRows(m, (i + j), random((i + 1), (i + b)));
+                swapRows(m, (i + j), randomInt((i + 1), (i + b)));
             }
         }
     }
@@ -177,9 +186,61 @@ public class Tools {
         a[row2 - 1] = temp;
     }
 
-    private static int random(int low, int high) {
-        Random r = new Random();
-        return r.nextInt((high + 1) - low) + low;
+    private static int randomInt(int low, int high) {
+        return random.nextInt((high + 1) - low) + low;
+    }
+
+    /**
+     * Validates that a completed Sudoku board is a valid solution.
+     * Checks all rows, columns, and boxes for uniqueness of numbers.
+     * @param board The completed board to validate
+     * @param dimensions The board size (9 for standard, 16 for devilish)
+     * @return true if the board is a valid Sudoku solution
+     */
+    private static boolean isValidSolution(int[][] board, int dimensions) {
+        int boxSize = (dimensions == 9) ? 3 : 4;
+
+        // Check each row for uniqueness
+        for (int row = 0; row < dimensions; row++) {
+            boolean[] seen = new boolean[dimensions + 1];
+            for (int col = 0; col < dimensions; col++) {
+                int val = board[row][col];
+                if (val < 1 || val > dimensions || seen[val]) {
+                    return false;
+                }
+                seen[val] = true;
+            }
+        }
+
+        // Check each column for uniqueness
+        for (int col = 0; col < dimensions; col++) {
+            boolean[] seen = new boolean[dimensions + 1];
+            for (int row = 0; row < dimensions; row++) {
+                int val = board[row][col];
+                if (val < 1 || val > dimensions || seen[val]) {
+                    return false;
+                }
+                seen[val] = true;
+            }
+        }
+
+        // Check each box for uniqueness
+        for (int boxRow = 0; boxRow < dimensions; boxRow += boxSize) {
+            for (int boxCol = 0; boxCol < dimensions; boxCol += boxSize) {
+                boolean[] seen = new boolean[dimensions + 1];
+                for (int r = 0; r < boxSize; r++) {
+                    for (int c = 0; c < boxSize; c++) {
+                        int val = board[boxRow + r][boxCol + c];
+                        if (val < 1 || val > dimensions || seen[val]) {
+                            return false;
+                        }
+                        seen[val] = true;
+                    }
+                }
+            }
+        }
+
+        return true;
     }
 
     /**
