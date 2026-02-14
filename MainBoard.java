@@ -2,6 +2,9 @@ package sudoku;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -16,53 +19,44 @@ public class MainBoard extends JPanel {
     private JTextField f[][] = new JTextField[16][16];
     private JPanel p[][] = new JPanel[4][4];
     private int coordinates[] = new int[2];
-    private Font Bold = new Font("Verdana", Font.BOLD, 20);
+    private Font Bold = SudokuTheme.CELL_FONT;
     private static String user;
     private static Difficulty difficulty;
     private int size;
 
-    private int[][] doodleAmount = new int[16][16]; //used to see if current cell exceeds number of allowed doodleAmount 
-    private JTextField[][] doodles = new JTextField[16][16]; //used to see if current cell exceeds number of allowed doodles 
-    private Font doodleFont = new Font("Verdana", Font.BOLD, 12);
-    private Color doodleColor = new Color(169, 0, 97);
+    private int[][] doodleAmount = new int[16][16];
+    private JTextField[][] doodles = new JTextField[16][16];
+    private Font doodleFont = SudokuTheme.CELL_DOODLE_FONT;
+    private Color doodleColor = SudokuTheme.DOODLE_COLOR;
     private int doodleLimit;
     private boolean doodleSelected;
     private GameView view;
     private int score;
 
-    //accessor for retrieving text field
     public JTextField[][] getTextField() {
         return f;
     }
 
-    //accessor for retrieving coordinates array in the form f[coordinates[0]][coordinates[1]]
     public JTextField getFCoordinates() {
         return f[coordinates[0]][coordinates[1]];
     }
 
-    //gets the status of the doodle button from GameView 
     public void doodleSelected(boolean selected) {
         doodleSelected = selected;
     }
 
-    //retrieves the status of the doodle button (toggled or not)
     public boolean getdoodleSelected() {
         return doodleSelected;
     }
 
-    //accessor for retrieving number of doodles in that particular cell  
     public int getDoodleAmount(JTextField f2) {
-        if ("".equals(f2.getText())) { //if cell is currently empty
+        if ("".equals(f2.getText())) {
             doodleAmount[coordinates[0]][coordinates[1]] = 0;
             return 0;
         } else
             return doodleAmount[coordinates[0]][coordinates[1]];
     }
 
-    /*
-    Number Listener is added to each textfield so that it 
-    will listen for integer input from the keyboard.
-    */
     public KeyListener NumberListener = new KeyListener() {
         @Override
         public void keyTyped(KeyEvent ke) {
@@ -78,64 +72,36 @@ public class MainBoard extends JPanel {
             } else if (getdoodleSelected() == true && getDoodleAmount(getFCoordinates()) < doodle_num) {
                 if (!isInteger(input) && difficulty.toString().equals("Devilish"))
                     switch (input.toLowerCase()) {
-                        case "q":
-                            setCellDoodle(10 + "", getFCoordinates());
-                            break;
-                        case "w":
-                            setCellDoodle(11 + "", getFCoordinates());
-                            break;
-                        case "e":
-                            setCellDoodle(12 + "", getFCoordinates());
-                            break;
-                        case "r":
-                            setCellDoodle(13 + "", getFCoordinates());
-                            break;
-                        case "t":
-                            setCellDoodle(14 + "", getFCoordinates());
-                            break;
-                        case "y":
-                            setCellDoodle(15 + "", getFCoordinates());
-                            break;
-                        case "u":
-                            setCellDoodle(16 + "", getFCoordinates());
-                            break;
+                        case "q": setCellDoodle(10 + "", getFCoordinates()); break;
+                        case "w": setCellDoodle(11 + "", getFCoordinates()); break;
+                        case "e": setCellDoodle(12 + "", getFCoordinates()); break;
+                        case "r": setCellDoodle(13 + "", getFCoordinates()); break;
+                        case "t": setCellDoodle(14 + "", getFCoordinates()); break;
+                        case "y": setCellDoodle(15 + "", getFCoordinates()); break;
+                        case "u": setCellDoodle(16 + "", getFCoordinates()); break;
                     }
                 else if (isInteger(input)) {
                     getFCoordinates().setName(stringsArr[0] + "," + stringsArr[1] + ",doodle");
                     setCellDoodle(input, getFCoordinates());
                 }
             } else if (getdoodleSelected() == false) {
-                if (!input.equals("0")) { //add integer values only
+                if (!input.equals("0")) {
                     if (!isInteger(input) && difficulty.toString().equals("Devilish"))
                         switch (input.toLowerCase()) {
-                            case "q":
-                                setCell(10 + "", getFCoordinates());
-                                break;
-                            case "w":
-                                setCell(11 + "", getFCoordinates());
-                                break;
-                            case "e":
-                                setCell(12 + "", getFCoordinates());
-                                break;
-                            case "r":
-                                setCell(13 + "", getFCoordinates());
-                                break;
-                            case "t":
-                                setCell(14 + "", getFCoordinates());
-                                break;
-                            case "y":
-                                setCell(15 + "", getFCoordinates());
-                                break;
-                            case "u":
-                                setCell(16 + "", getFCoordinates());
-                                break;
+                            case "q": setCell(10 + "", getFCoordinates()); break;
+                            case "w": setCell(11 + "", getFCoordinates()); break;
+                            case "e": setCell(12 + "", getFCoordinates()); break;
+                            case "r": setCell(13 + "", getFCoordinates()); break;
+                            case "t": setCell(14 + "", getFCoordinates()); break;
+                            case "y": setCell(15 + "", getFCoordinates()); break;
+                            case "u": setCell(16 + "", getFCoordinates()); break;
                         }
                     else if (isInteger(input)) {
-                        setCell(input, getFCoordinates()); //set cell to inputed number
+                        setCell(input, getFCoordinates());
                         getFCoordinates().setName(stringsArr[0] + "," + stringsArr[1] + ",guess," + view.getTimer());
                     }
                     isFinished(difficulty);
-                } else if (input.equals("0")) { //blank
+                } else if (input.equals("0")) {
                     setCell("", getFCoordinates());
                     getFCoordinates().setName(stringsArr[0] + "," + stringsArr[1]);
                 }
@@ -148,12 +114,12 @@ public class MainBoard extends JPanel {
                     isEmpty = checkCell("", f[x][y]);
 
                     if (isEqual && !isEmpty)
-                        Highlight(f[x][y], Color.YELLOW);
+                        Highlight(f[x][y], SudokuTheme.CELL_HIGHLIGHT);
                     if (!isEqual) {
-                        Highlight(f[x][y], Color.WHITE);
+                        Highlight(f[x][y], SudokuTheme.CELL_BG);
                     }
                 }
-            getFCoordinates().setBackground(Color.LIGHT_GRAY);
+            getFCoordinates().setBackground(SudokuTheme.CELL_SELECTED);
         }
 
         @Override
@@ -167,14 +133,8 @@ public class MainBoard extends JPanel {
         public String getKey(KeyEvent ke) {
             return ke.getKeyChar() + "";
         }
-
     };
 
-    /*
-    highlighter is used only on the sudoku board.
-    The coordinates of the textfield inside of the sudoku board will be set 
-    to the int array "coordinates".
-    */
     private FocusListener highlighter = new FocusListener() {
         @Override
         public void focusGained(FocusEvent e) {
@@ -190,35 +150,31 @@ public class MainBoard extends JPanel {
                     isEmpty = checkCell("", f[x][y]);
 
                     if (isEqual && !isEmpty)
-                        Highlight(f[x][y], Color.YELLOW);
+                        Highlight(f[x][y], SudokuTheme.CELL_HIGHLIGHT);
                     if (!isEqual) {
-                        Highlight(f[x][y], Color.WHITE);
+                        Highlight(f[x][y], SudokuTheme.CELL_BG);
                     }
                 }
-            e.getComponent().setBackground(Color.LIGHT_GRAY);
+            e.getComponent().setBackground(SudokuTheme.CELL_SELECTED);
         }
 
         @Override
         public void focusLost(FocusEvent e) {
-            e.getComponent().setBackground(Color.WHITE);
+            e.getComponent().setBackground(SudokuTheme.CELL_BG);
         }
     };
 
-    //highlights and unhighlights cells - used by FocusListener highlighter
     public void Highlight(JTextField f2, Color color) {
         f2.setBackground(color);
     }
 
-
-    //used to delete the selected cell 
     public void deleteCell(JTextField f2) {
         String stringsArr[] = getFCoordinates().getName().split(",");
         int count = getFCoordinates().getName().split(",", -1).length - 1;
 
-
         if (count >= 2 && !stringsArr[2].equals("init")) {
             setCell("", f2);
-            doodleAmount[coordinates[0]][coordinates[1]] = 0; //reset doodle amount back to 0
+            doodleAmount[coordinates[0]][coordinates[1]] = 0;
             getFCoordinates().setName(stringsArr[0] + "," + stringsArr[1]);
             if (!difficulty.toString().equals("Devilish"))
                 score -= (81 - difficulty.getNumberOfCellsToDisplay()) * 5 - Integer.parseInt(stringsArr[3]);
@@ -227,10 +183,9 @@ public class MainBoard extends JPanel {
         }
         for (int y = 0; y < size; y++)
             for (int x = 0; x < size; x++)
-                Highlight(f[x][y], Color.WHITE);
+                Highlight(f[x][y], SudokuTheme.CELL_BG);
     }
 
-    //controls the number pad and inputs the chosen number into the chosen cell 
     public void numberPad(String num) {
         String strings = getFCoordinates().getName();
         String stringsArr[] = strings.split(",");
@@ -254,16 +209,15 @@ public class MainBoard extends JPanel {
                 isEmpty = checkCell("", f[x][y]);
 
                 if (isEqual && !isEmpty)
-                    Highlight(f[x][y], Color.YELLOW);
+                    Highlight(f[x][y], SudokuTheme.CELL_HIGHLIGHT);
                 if (!isEqual) {
-                    Highlight(f[x][y], Color.WHITE);
+                    Highlight(f[x][y], SudokuTheme.CELL_BG);
                 }
             }
-        getFCoordinates().setBackground(Color.LIGHT_GRAY);
+        getFCoordinates().setBackground(SudokuTheme.CELL_SELECTED);
         isFinished(difficulty);
     }
 
-    //doodle function - sets the chosen cell to whatever the user inputs from their keyboard 
     public void setCellDoodle(String key, JTextField f2) {
         String doodle = f2.getText();
         int doodleLimit = getDoodleAmount(f2);
@@ -281,21 +235,16 @@ public class MainBoard extends JPanel {
         doodleAmount[coordinates[0]][coordinates[1]] = doodleLimit;
     }
 
-
-    //normal guesses - sets the chosen cell to whatever the user inputs from their keyboard 
     public void setCell(String key, JTextField f2) {
-        if ("".equals(key)) { //if it is blank, only the text needs to be adjusted
+        if ("".equals(key)) {
             f2.setText(key);
-            //doodleAmount[coordinates[0]][coordinates[1]] = 0;
-        } else { //otherwise, set the text, font, and color
+        } else {
             f2.setText(key);
             f2.setFont(Bold);
-            f2.setForeground(Color.BLACK);
-            //doodleAmount[coordinates[0]][coordinates[1]] = 0;
+            f2.setForeground(SudokuTheme.GUESS_NUMBER);
         }
     }
 
-    //check to see if a specific number is already present in a cell or use to compare contents 
     public boolean checkCell(String key, JTextField f2) {
         if (f2.getText().equals(key))
             return true;
@@ -303,8 +252,7 @@ public class MainBoard extends JPanel {
             return false;
     }
 
-    //creates borders around cells - default is black, while red is used by checkBoard for incorrect answers
-    private Border Regular = BorderFactory.createLineBorder(Color.BLACK, 1);
+    private Border Regular = SudokuTheme.createCellBorder();
 
     public MainBoard(String s, Difficulty difficulty, GameView view) {
         user = s;
@@ -314,11 +262,10 @@ public class MainBoard extends JPanel {
             size = 9;
         else
             size = 16;
+        setBackground(SudokuTheme.BG_DARK);
         CreateBoard(difficulty);
-        //PopulateBoard();
     }
 
-    //create actual board with default settings 
     public final void CreateBoard(Difficulty difficulty) {
         if (!difficulty.toString().equals("Devilish")) {
             for (int x = 0; x <= 8; x++) {
@@ -327,8 +274,10 @@ public class MainBoard extends JPanel {
                     f[x][y].setEditable(false);
                     f[x][y].setHorizontalAlignment(JTextField.CENTER);
                     f[x][y].setName(x + "," + y);
-                    f[x][y].setBackground(Color.WHITE);
+                    f[x][y].setBackground(SudokuTheme.CELL_BG);
+                    f[x][y].setForeground(SudokuTheme.TEXT_PRIMARY);
                     f[x][y].setBorder(Regular);
+                    f[x][y].setFont(Bold);
                     f[x][y].addFocusListener(highlighter);
                     f[x][y].addKeyListener(NumberListener);
                 }
@@ -336,11 +285,13 @@ public class MainBoard extends JPanel {
 
             for (int x = 0; x <= 2; x++) {
                 for (int y = 0; y <= 2; y++) {
-                    p[x][y] = new JPanel(new GridLayout(3, 3));
+                    p[x][y] = new JPanel(new GridLayout(3, 3, 1, 1));
+                    p[x][y].setBackground(SudokuTheme.BOX_BORDER);
+                    p[x][y].setBorder(BorderFactory.createLineBorder(SudokuTheme.BOX_BORDER, 2));
                 }
             }
 
-            setLayout(new GridLayout(3, 3, 5, 5));
+            setLayout(new GridLayout(3, 3, 3, 3));
 
             for (int j = 0; j <= 2; j++) {
                 for (int i = 0; i <= 2; i++) {
@@ -359,8 +310,10 @@ public class MainBoard extends JPanel {
                     f[x][y].setEditable(false);
                     f[x][y].setHorizontalAlignment(JTextField.CENTER);
                     f[x][y].setName(x + "," + y);
-                    f[x][y].setBackground(Color.WHITE);
+                    f[x][y].setBackground(SudokuTheme.CELL_BG);
+                    f[x][y].setForeground(SudokuTheme.TEXT_PRIMARY);
                     f[x][y].setBorder(Regular);
+                    f[x][y].setFont(Bold);
                     f[x][y].addFocusListener(highlighter);
                     f[x][y].addKeyListener(NumberListener);
                 }
@@ -368,11 +321,13 @@ public class MainBoard extends JPanel {
 
             for (int x = 0; x <= 3; x++) {
                 for (int y = 0; y <= 3; y++) {
-                    p[x][y] = new JPanel(new GridLayout(4, 4));
+                    p[x][y] = new JPanel(new GridLayout(4, 4, 1, 1));
+                    p[x][y].setBackground(SudokuTheme.BOX_BORDER);
+                    p[x][y].setBorder(BorderFactory.createLineBorder(SudokuTheme.BOX_BORDER, 2));
                 }
             }
 
-            setLayout(new GridLayout(4, 4, 5, 5));
+            setLayout(new GridLayout(4, 4, 3, 3));
 
             for (int j = 0; j <= 3; j++) {
                 for (int i = 0; i <= 3; i++) {
@@ -387,7 +342,6 @@ public class MainBoard extends JPanel {
         }
     }
 
-    //populate the board based on the inputed .txt file
     public final void PopulateBoard() {
         File file = new File(Tools.getDocumentsPath() + "/Sudoku/" + user + "/TestCaseSave.txt");
         int info[] = new int[2];
@@ -406,7 +360,7 @@ public class MainBoard extends JPanel {
                             f[info[0] - 1][info[1] - 1].setText(stringCoorArr[2]);
                             f[info[0] - 1][info[1] - 1].setName((info[0] - 1) + "," + (info[1] - 1) + ",init");
                             f[info[0] - 1][info[1] - 1].setFont(Bold);
-                            f[info[0] - 1][info[1] - 1].setForeground(Color.BLUE);
+                            f[info[0] - 1][info[1] - 1].setForeground(SudokuTheme.GIVEN_NUMBER);
                         } else
                             break;
                     }
@@ -435,12 +389,12 @@ public class MainBoard extends JPanel {
                                 f[info[0] - 1][info[1] - 1].setText(stringCoorArr[2]);
                                 f[info[0] - 1][info[1] - 1].setName((info[0] - 1) + "," + (info[1] - 1) + ",init");
                                 f[info[0] - 1][info[1] - 1].setFont(Bold);
-                                f[info[0] - 1][info[1] - 1].setForeground(Color.BLUE);
+                                f[info[0] - 1][info[1] - 1].setForeground(SudokuTheme.GIVEN_NUMBER);
                             } else if (stringCoorArr[3].equals("guess")) {
                                 f[info[0] - 1][info[1] - 1].setText(stringCoorArr[2]);
                                 f[info[0] - 1][info[1] - 1].setName((info[0] - 1) + "," + (info[1] - 1) + ",guess");
                                 f[info[0] - 1][info[1] - 1].setFont(Bold);
-                                f[info[0] - 1][info[1] - 1].setForeground(Color.BLACK);
+                                f[info[0] - 1][info[1] - 1].setForeground(SudokuTheme.GUESS_NUMBER);
                             } else if (stringCoorArr[count].equals("doodle")) {
                                 f[info[0] - 1][info[1] - 1].setText(stringCoorArr[2]);
                                 f[info[0] - 1][info[1] - 1].setName((info[0] - 1) + "," + (info[1] - 1) + ",doodle");
@@ -456,19 +410,16 @@ public class MainBoard extends JPanel {
         }
     }
 
-    //clears the boards and removes everything but the cells that were initially there
     public final void resetBoard() {
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
-                if (f[x][y].getForeground() != Color.BLUE)
+                if (f[x][y].getForeground() != SudokuTheme.GIVEN_NUMBER)
                     f[x][y].setText("");
                 doodleAmount[x][y] = 0;
             }
         }
     }
 
-    //checks the board to see which guesses are right and which ones are wrong
-    //cells with incorrect guesses will have a red border
     public final int CheckBoard(Difficulty d) {
         File file = new File(Tools.getDocumentsPath() + "/Sudoku/" + user + "/" + d.toString() + ".txt");
         score = 0;
@@ -486,8 +437,7 @@ public class MainBoard extends JPanel {
 
                         if (f[info[0] - 1][info[1] - 1].getFont() != doodleFont && stringCoorArr[3].equals("key")) {
                             if (!f[info[0] - 1][info[1] - 1].getText().equals(stringCoorArr[2]) && !f[info[0] - 1][info[1] - 1].getText().equals("")) {
-                                Border Wrong = BorderFactory.createLineBorder(Color.RED, 3);
-                                f[info[0] - 1][info[1] - 1].setBorder(Wrong);
+                                f[info[0] - 1][info[1] - 1].setBorder(SudokuTheme.createErrorBorder());
                             } else f[info[0] - 1][info[1] - 1].setBorder(Regular);
 
                             count = f[info[0] - 1][info[1] - 1].getName().split(",", -1).length - 1;
@@ -548,15 +498,12 @@ public class MainBoard extends JPanel {
         if (difficulty == Difficulty.TEST)
             leaderBoard.newHighScore(Difficulty.EASY, user, score + "", time + "");
         leaderBoard.newHighScore(d, user, score + "", time + "");
-
     }
 
-    //gets the contents of the cell 
     public String getText(int x, int y) {
         return f[x][y].getText();
     }
 
-    //checks if a string is an integer 
     public static boolean isInteger(char c) {
         String s = c + "";
         try {
@@ -567,7 +514,6 @@ public class MainBoard extends JPanel {
         return true;
     }
 
-    //checks if a character is an integer
     public static boolean isInteger(String s) {
         try {
             Integer.parseInt(s);
