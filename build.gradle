@@ -1,0 +1,46 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.sudoku'
+version = '1.0-SNAPSHOT'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+// Use local JUnit JAR from Gradle installation (no network needed)
+repositories {
+    flatDir {
+        dirs '/opt/gradle-8.14.3/lib'
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['.']
+            include 'sudoku/*.java'
+        }
+    }
+    test {
+        java {
+            srcDirs = ['test']
+            include 'sudoku/*Test.java'
+        }
+    }
+}
+
+dependencies {
+    testImplementation files('/opt/gradle-8.14.3/lib/junit-4.13.2.jar')
+    testImplementation files('/opt/gradle-8.14.3/lib/hamcrest-core-1.3.jar')
+}
+
+test {
+    testLogging {
+        events "passed", "skipped", "failed"
+        showStandardStreams = true
+        exceptionFormat = 'full'
+    }
+}
