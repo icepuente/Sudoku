@@ -1,3 +1,9 @@
+# Sudoku Game
+
+A Java Swing Sudoku game supporting both 9x9 and 16x16 (Devilish) boards.
+
+## Running the Game
+
 To properly test this Game of sudoku please run the Jar file.
 
 Create a profile under any name.
@@ -22,3 +28,52 @@ Click Test in the dropdown menu and click "OK" to start your game!
 
 
 HOPE YOU HAVE FUN! :)
+
+
+## Running Tests
+
+The project includes a JUnit 4 test suite covering core game logic.
+
+### Quick Start
+
+```bash
+./run_tests.sh
+```
+
+### Test Classes
+
+| Test Class | Description |
+|------------|-------------|
+| DifficultyTest | Tests for difficulty levels (Easy, Medium, Hard, Devilish) |
+| MainBoardTest | Tests for input validation (isInteger methods) |
+| ToolsTest | Tests for board generation utilities |
+| SaveTest | Tests for game save/load functionality |
+
+### Build Tools
+
+The project supports both Gradle and Maven:
+
+```bash
+# Using the test runner (recommended - no network required)
+./run_tests.sh
+
+# Using Gradle (requires network for first run)
+gradle test
+
+# Using Maven (requires network for first run)
+mvn test
+```
+
+### Project Structure
+
+```
+Sudoku/
+├── *.java              # Source files (sudoku package)
+├── test/
+│   └── sudoku/         # JUnit test files
+├── binary/
+│   └── Sudoku.jar      # Compiled game
+├── build.gradle        # Gradle build config
+├── pom.xml             # Maven build config
+└── run_tests.sh        # Test runner script
+```
